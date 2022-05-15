@@ -13,3 +13,14 @@ Created a simple website to authenticate users with registration, login, and pas
 ### Step 3: If the username is unique, the username and password are stored on the database
 This is how it works (note: this app did not use React, just a simple HTML for the frontend)
 ![image](https://user-images.githubusercontent.com/94336773/168488379-a263ecef-b779-443b-9ed3-fb7c921bb1a4.png)
+
+
+## Technologies Used
+1. MongoDB - https://mongoosejs.com/docs/index.html
+2. NodeJS
+3. HTML
+
+
+## Bugs 
+
+
