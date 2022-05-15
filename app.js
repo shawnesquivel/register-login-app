@@ -1,50 +1,52 @@
-// // file handling library
-// const fs = require('fs')
-// // start the server
-// const http = require('http')
-// const port = 3000
-
-// const server = http.createServer(function(req,res){
-//     res.writeHead(200, {'Content-Type': 'text/html'})
-//     fs.readFile('index.html', function(error,data){
-//         if(error){
-//             res.writeHead(404)
-//             res.write('Error: File Not Found')
-//         } else{
-//             res.write(data)
-//         }
-//         res.end()
-//     })
-// })
-
-// server.listen(port, function(error){
-//     if (error){
-//         console.log('Something went wrong', error)
-//     } else{
-//         console.log('Server is listening on port '+ port )
-//     }
-// })
-
 // Import Libraries
+const mongoose = require('mongoose')
 const express = require("express")
 const path = require('path')
-const mongoose = require('mongoose')
-const User = require('./model/user')
 const port = 4000
-const bcrypt = require('bcrypt')
 // create an instance of express
 const app = express()
+// Hashing
+const bcrypt = require('bcrypt')
+// An instance of a model is a document
+const User = require('./model/user')
 
-async function main () { mongoose.connect('mongodb://localhost:27017/login-app-db',{
-    useNewUrlParser:  true,
-    useUnifiedTopology: true,
-})
-}
+// GLOBAL VARIABLES
+const SERVER_TIMEOUT_SEC = 30; 
+const server = '127.0.0.1:27017'
+const database = 'login-app-db'
 
 // Connect to the static folder
 app.use('/', express.static(path.join(__dirname, 'static')))
 
 app.use(express.json())
+
+// 1a Connect to database with Promises
+// mongoose.connect(`mongodb://${server}/${database}`,{
+//     useNewUrlParser:  true,
+//     useUnifiedTopology: true,
+//     serverSelectionTimeoutMS: SERVER_TIMEOUT_SEC*1000
+// }).then( () => {
+//     console.log('Succesfully connected to MongoDB')
+// }).catch(err => {
+//     console.log('Failed to connect to MongoDB')
+// })   
+
+// 1b Connect ot database with Async/Await
+const connectDB = async () => {
+    try {
+        await mongoose.connect(`mongodb://${server}/${database}`, {
+            useNewUrlParser:  true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: SERVER_TIMEOUT_SEC*1000
+        })
+        console.log('Succesfully connected to MongoDB')
+    } catch (err){
+        console.log('Failed to connect to MongoDB', err)
+    }
+
+    }
+
+connectDB();
 
 app.post('/api/register', async (req,res) => {
     const {username, password: plainTextPassword } = req.body
@@ -52,11 +54,11 @@ app.post('/api/register', async (req,res) => {
     try { 
         console.log("Hello from the Try Block")
         console.log(username,password)
-        const response =  User.create({
+        const response = await User.create({
             username,
             password
         })
-        console.log('User created succesfully', response)
+        console.log('User created succesfully', response, username, password)
     } catch (error) {
         console.log(error)
         return res.json({status: 'error'})
