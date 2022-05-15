@@ -1,10 +1,11 @@
 # register-login-app
 Created a simple website to authenticate users with registration, login, and password changes.
-![image](https://user-images.githubusercontent.com/94336773/168488265-99408ca3-488f-48b3-9557-42f86a97867c.png)
+![image](https://user-images.githubusercontent.com/94336773/168489002-a3edd0e2-f332-4092-bf00-2c1d22c1175b.png)
 
+## Instructions
 
-### Step 1: Input your password and submiot
-![image](https://user-images.githubusercontent.com/94336773/168488286-907b36e5-7b16-4ce6-84c5-db3ae9b8e54e.png)
+### Step 1: Input your password and submit
+![image](https://user-images.githubusercontent.com/94336773/168488993-754f3773-e88b-42b0-9699-6a616a98ccff.png)
 
 ### Step 2: The password is hashed using the bcrypt algorithm
 ![image](https://user-images.githubusercontent.com/94336773/168488316-147098bf-eb88-4968-a900-167b12e3a98e.png)
