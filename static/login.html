@@ -4,27 +4,27 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Registration</title>
 </head>
 <body>
-    <h1>Registration</h1>
-    <form id="reg-form">
+    <h1>Login</h1>
+    <form id="login">
         <input type="text" autocomplete="off" id="username" placeholder="Username" />
         <input type="text" autocomplete="off" id="password" placeholder="Password" />
         <input type="submit" value="Submit" />
     </form>
-    <a href="login.html">Login</a>
 
+    <a href="index.html"> Registration</a>
     <script>
-        const form = document.getElementById('reg-form');
-        form.addEventListener('submit', registerUser)
+        const form = document.getElementById('login');
+        form.addEventListener('submit', login)
         
-        async function registerUser (e) {
+        async function login (e) {
             e.preventDefault()
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             // Post the username/password to the /api/register database
-            const result = await fetch('/api/register',{
+            const result = await fetch('/api/login',{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -35,7 +35,8 @@
                 })
             }).then((res) => res.json())
 				if (result.status === 'ok') {
-					// everythign went fine
+					// everything went fine
+                    console.log('Got the token: ', result.data)
 					alert('Success')
 				} else {
 					alert(result.error)

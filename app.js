@@ -47,11 +47,20 @@ const connectDB = async () => {
 
 connectDB();
 
+// Database Operations - CRUD = Database, ReST (get, post, put, delete) = HTTP (clients/servers)
+
+// Login API Endpoint - Authorization
+app.post("/api/login", async (req,res) => {
+  res.json({status: "ok", data:"abcdefg12345"})
+})
+
+// Registration API Endpoint - POST REQUEST - Authentication
 app.post("/api/register", async (req, res) => {
   const { username, password: plainTextPassword } = req.body;
   const password = await bcrypt.hash(plainTextPassword, 10);
 
-  // Form Validation
+  // Error Message Handling
+  
   if (!username || typeof username !== "string"){
       return res.json({status: "error", error: "Invalid username"})
   }
