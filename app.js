@@ -1,6 +1,7 @@
 // Import Libraries
 const mongoose = require("mongoose");
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const path = require("path");
 const port = 4000;
 // create an instance of express
@@ -50,9 +51,27 @@ connectDB();
 // Database Operations - CRUD = Database, ReST (get, post, put, delete) = HTTP (clients/servers)
 
 // Login API Endpoint - Authorization
-app.post("/api/login", async (req,res) => {
-  res.json({status: "ok", data:"abcdefg12345"})
-})
+app.post("/api/login", async (req, res) => {
+  const { username, password } = req.body;
+  // .lean() returns a JS object instead of Mongoose
+  const user = await User.findOne({ username, password }).lean();
+
+  if (!user) {
+    return res.json({ status: "error", error: "Invalid username/password" });
+  }
+
+  // .compare() -  compares if the hashed password is a possibility of the original password
+  if (bcrypt.compare(password, user.password)) {
+    const token = jwt.sign({
+      id: user._id,
+      username: username.username,
+    });
+
+    return res.json({ status: "success", data: "" });
+  }
+
+  res.json({ status: "ok", error: "Invalid username/password" });
+});
 
 // Registration API Endpoint - POST REQUEST - Authentication
 app.post("/api/register", async (req, res) => {
@@ -60,20 +79,20 @@ app.post("/api/register", async (req, res) => {
   const password = await bcrypt.hash(plainTextPassword, 10);
 
   // Error Message Handling
-  
-  if (!username || typeof username !== "string"){
-      return res.json({status: "error", error: "Invalid username"})
+
+  if (!username || typeof username !== "string") {
+    return res.json({ status: "error", error: "Invalid username" });
   }
-    //  Use the plain text password, otherwise you will get async inconsistencies
-  if (!plainTextPassword || typeof plainTextPassword !== "string"){
-      return res.json({status: "error", error: "Invalid password!"})
+  //  Use the plain text password, otherwise you will get async inconsistencies
+  if (!plainTextPassword || typeof plainTextPassword !== "string") {
+    return res.json({ status: "error", error: "Invalid password!" });
   }
 
   if (plainTextPassword.length < 5) {
-      return res.json ({
-          status:'error',
-          error: "Password is too short, please use at least 6 characters!"
-      })
+    return res.json({
+      status: "error",
+      error: "Password is too short, please use at least 6 characters!",
+    });
   }
 
   try {
