@@ -6,12 +6,13 @@ const path = require("path");
 const port = 4000;
 // create an instance of express
 const app = express();
-// Hashing
+// Hashing Library
 const bcrypt = require("bcrypt");
 // An instance of a model is a document
 const User = require("./model/user");
+const { resolve } = require("path");
 
-// GLOBAL VARIABLES
+// Global Variables
 const SERVER_TIMEOUT_SEC = 30;
 const JWT_SECRET_KEY = "afdjkljakl3518901";
 const server = "127.0.0.1:27017";
@@ -49,11 +50,25 @@ const connectDB = async () => {
 
 connectDB();
 
-// Database Operations - CRUD = Database, ReST (get, post, put, delete) = HTTP (clients/servers)
+// Database Operations - CRUD = Database,
+// ReST (get, post, put, delete)  = HTTP (clients/servers)
+// Change Password API Endpoint
 app.post("/api/change-password", (req, res) => {
   const { token } = req.body;
-  const user = jwt.verify(token, JWT_SECRET_KEY);
-  console.log(user);
+  // First, verify that the user is still logged in
+  try {
+    const user = jwt.verify(token, JWT_SECRET_KEY);
+    console.log("JWT Decoded:", user);
+    res.json({ data: token });
+  } catch (error) {
+    console.log("error in the change password:", error);
+    res.json({ status: "error", error: "uh oh!" });
+  }
+
+  // console.log("JWT Decoded:", user);
+  // console.log("New Password:", newpassword);
+
+  res.json({ status: "ok" });
 });
 
 // Login API Endpoint - Authorization
@@ -75,7 +90,7 @@ app.post("/api/login", async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
-        username: username.username,
+        username: user.username,
       },
       JWT_SECRET_KEY
     );
