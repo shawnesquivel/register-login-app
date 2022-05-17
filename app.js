@@ -56,6 +56,10 @@ connectDB();
 app.post("/api/change-password", (req, res) => {
   const { token } = req.body;
   // First, verify that the user is still logged in
+
+  // *--------------------TO FIX ----------------* //
+  // Add password verification
+  // New password is not being sent down (check changePassword.html)
   try {
     const user = jwt.verify(token, JWT_SECRET_KEY);
     console.log("JWT Decoded:", user);
