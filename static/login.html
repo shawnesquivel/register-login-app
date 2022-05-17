@@ -1,47 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registration</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Login</h1>
     <form id="login">
-        <input type="text" autocomplete="off" id="username" placeholder="Username" />
-        <input type="text" autocomplete="off" id="password" placeholder="Password" />
-        <input type="submit" value="Submit" />
+      <input
+        type="text"
+        autocomplete="off"
+        id="username"
+        placeholder="Username"
+      />
+      <input
+        type="text"
+        autocomplete="off"
+        id="password"
+        placeholder="Password"
+      />
+      <input type="submit" value="Submit" />
     </form>
 
     <a href="index.html"> Registration</a>
+    <a href="changePassword.html">Change Password</a>
+
     <script>
-        const form = document.getElementById('login');
-        form.addEventListener('submit', login)
-        
-        async function login (e) {
-            e.preventDefault()
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            // Post the username/password to the /api/register database
-            const result = await fetch('/api/login',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username, 
-                    password
-                })
-            }).then((res) => res.json())
-				if (result.status === 'ok') {
-					// everything went fine
-                    console.log('Got the token: ', result.data)
-					alert('Success')
-				} else {
-					alert(result.error)
-				}
-            }        
+      const form = document.getElementById("login");
+      form.addEventListener("submit", login);
+
+      async function login(e) {
+        e.preventDefault();
+        // Get the form data
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        // Send the login details to the User Schema
+        const result = await fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        }).then((res) => res.json());
+        // Check if the token was received
+        if (result.status === "success") {
+          // everything went fine
+          localStorage.setItem("token", result.data);
+          console.log("Got the token: ", result.data);
+          console.log("Local Storage: ", localStorage);
+          alert("Successfully got the token");
+        } else {
+          console.log(result.status);
+          console.log("unable to get token");
+          alert(result.error);
+        }
+      }
     </script>
-</body>
+  </body>
 </html>

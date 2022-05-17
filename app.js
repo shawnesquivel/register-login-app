@@ -13,6 +13,7 @@ const User = require("./model/user");
 
 // GLOBAL VARIABLES
 const SERVER_TIMEOUT_SEC = 30;
+const JWT_SECRET_KEY = "afdjkljakl3518901";
 const server = "127.0.0.1:27017";
 const database = "login-app-db";
 
@@ -49,25 +50,37 @@ const connectDB = async () => {
 connectDB();
 
 // Database Operations - CRUD = Database, ReST (get, post, put, delete) = HTTP (clients/servers)
+app.post("/api/change-password", (req, res) => {
+  const { token } = req.body;
+  const user = jwt.verify(token, JWT_SECRET_KEY);
+  console.log(user);
+});
 
 // Login API Endpoint - Authorization
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
+  console.log("Login Details", username, password);
   // .lean() returns a JS object instead of Mongoose
-  const user = await User.findOne({ username, password }).lean();
+  const user = await User.findOne({ username }).lean();
 
   if (!user) {
-    return res.json({ status: "error", error: "Invalid username/password" });
+    return res.json({
+      status: "error",
+      error: "Can't find user / incorrect password",
+    });
   }
 
   // .compare() -  compares if the hashed password is a possibility of the original password
-  if (bcrypt.compare(password, user.password)) {
-    const token = jwt.sign({
-      id: user._id,
-      username: username.username,
-    });
-
-    return res.json({ status: "success", data: "" });
+  if (await bcrypt.compare(password, user.password)) {
+    const token = jwt.sign(
+      {
+        id: user._id,
+        username: username.username,
+      },
+      JWT_SECRET_KEY
+    );
+    console.log("token", token);
+    return res.json({ status: "success", data: token });
   }
 
   res.json({ status: "ok", error: "Invalid username/password" });
