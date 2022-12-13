@@ -105,7 +105,7 @@ app.post("/api/login", async (req, res) => {
   res.json({ status: "ok", error: "Invalid username/password" });
 });
 
-// Registration API Endpoint - POST REQUEST - Authentication
+// Register User - Post request to server
 app.post("/api/register", async (req, res) => {
   const { username, password: plainTextPassword } = req.body;
   const password = await bcrypt.hash(plainTextPassword, 10);
